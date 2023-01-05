@@ -1,0 +1,162 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+    
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: goaaroregistry.azurecr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME1: permit-api
+  IMAGE_NAME2: permit-fe
+  APP: testpermit-microservices
+  GIT_DEPLOY_REPO: moves-dlh-deploy-artifacts-ghactions
+
+  eOPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+  eOPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+  OPENSHIFT_NAMESPACE: "dlh-dev"
+
+jobs:
+  build:
+    name: Build the code and image
+    if: github.event.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment: 
+      name: Dev
+    steps:
+    - name: Checkout git repository
+      id: checkout
+      uses: actions/checkout@v3
+
+    - name: Analyze with SonarQube
+
+        # You can pin the exact commit or the version.
+        # uses: SonarSource/sonarqube-scan-action@v1.1.0
+      uses: SonarSource/sonarqube-scan-action@7295e71c9583053f5bf40e9d4068a0c974603ec8
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # Generate a token on SonarQube, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)          
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}   # add the URL of your instance to the secrets of this repo with the name SONAR_HOST_URL (Settings > Secrets > Actions > add new repository secret)
+      with:
+          # Additional arguments for the sonarcloud scanner
+        args:
+            # Unique key of your project. You can find it in SonarQube > [my project] > Project Information (top-right menu)
+            # mandatory
+            -Dsonar.projectKey=MOVESTestPermitMicroServices
+            # Comma-separated paths to directories containing main source files.
+            #-Dsonar.sources= # optional, default is project base directory
+            # When you need the analysis to take place in a directory other than the one from which it was launched
+            #-Dsonar.projectBaseDir= # optional, default is .
+            # Comma-separated paths to directories containing test source files.
+            #-Dsonar.tests= # optional. For more info about Code Coverage, please refer to https://docs.sonarcloud.io/enriching/test-coverage/overview/
+            # Adds more detail to both client and server-side analysis logs, activating DEBUG mode for the scanner, and adding client-side environment variables and system properties to the server-side log of analysis report processing.
+            #-Dsonar.verbose= # optional, default is false
+
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: current directory path
+      run: pwd
+    - name: list current directory structure
+      run: ls -lrt ./TestPermitMicroAPI/bin/Debug/net6.0
+    - name: provide directory permissions
+      run: echo $GITHUB_SHA
+   # - name: Build the Docker image
+   #   run: docker build . --file ./TestPermitMicroAPI/Dockerfile --tag ${{ env.REGISTRY }}/024087d6-4aa7-4a52-90ec-0db8ffe1249e/dlh-dev/${{ env.IMAGE_NAME1 }}:$GITHUB_SHA
+    - name: Build the Docker image
+      run: docker build . --file ./TestPermitMicroAPI/Dockerfile --tag my-image-name:latest
+ 
+ 
+    - name: Anchore grype scan download
+      uses: anchore/scan-action/download-grype@v3
+      id: grype
+    - name: Anchore scan run
+      id: grype-scan
+      run: ${{steps.grype.outputs.cmd}} my-image-name:latest -o json > scan-image-json.json
+    - name: New Inspect grype scan json report
+      run: cat scan-image-json.json
+ 
+    - name: Tag the Docker image to ACR tag
+      run: docker tag my-image-name:latest ${{ env.REGISTRY }}/024087d6-4aa7-4a52-90ec-0db8ffe1249e/dlh-dev/${{ env.IMAGE_NAME1 }}:$GITHUB_SHA
+ 
+    - name: Login to ACR
+      run: docker login ${{ env.REGISTRY }} -u ${{ secrets.ACR_USR }} -p ${{ secrets.ACR_PWD }}
+    - name: push to ACR
+      run: docker push ${{ env.REGISTRY }}/024087d6-4aa7-4a52-90ec-0db8ffe1249e/dlh-dev/${{ env.IMAGE_NAME1 }}:$GITHUB_SHA
+
+    - name: GitOps git repo clone
+      run: |
+          
+
+
+          git config --global user.name "vishwanath-r-puranik"
+
+          git config --global user.email "vishwanath.r.puranik@gov.ab.ca"
+
+          git clone  https://vishwanath-r-puranik:${{ secrets.G_TOKEN }}@github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}.git 
+
+    - name: list gitops folder structure
+      run: ls -lrt ./${{ env.GIT_DEPLOY_REPO }}
+
+    - name: 'Update patch with github commit Sha'
+      run: |
+          echo $GITHUB_SHA
+ 
+          sed -i "s|:latest|:$GITHUB_SHA|g" ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api-template.yaml
+          cp ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api-template.yaml ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api.yaml
+          cat ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api.yaml
+          sed -i "s|:latest|:$GITHUB_SHA|g" ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe-template.yaml
+          cp ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe-template.yaml ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe.yaml
+          cat ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe.yaml
+          cd ./${{ env.GIT_DEPLOY_REPO }}
+      
+    - name: Install OpenShift client
+      uses: redhat-actions/openshift-tools-installer@v1
+      with:
+        oc: 4
+      
+      
+    - name: 'Kustomize deployment manifests and other artifacts'
+      run: |
+          oc kustomize ./${{ env.GIT_DEPLOY_REPO }}/dev > ./${{ env.GIT_DEPLOY_REPO }}/dev/deploy/${{env.APP}}.yaml
+
+    - name: 'Upload updated deployment manifests'
+      run: |
+      
+          cd ./${{ env.GIT_DEPLOY_REPO }}
+          git add .
+
+          git commit -m "committed from gh task"
+
+          git branch dev
+          git checkout dev
+          git push --set-upstream origin dev
+
+    - name: Log in to OpenShift
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ env.eOPENSHIFT_SERVER }}
+        openshift_token: ${{ env.eOPENSHIFT_TOKEN }}
+        insecure_skip_tls_verify: true
+        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+
+    - name: Deploy application onto OpenShift
+      run: |
+
+          # oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=${{ secrets.OPENSHIFT_SERVER }}
+          oc apply -f ./${{ env.GIT_DEPLOY_REPO }}/dev/deploy/${{env.APP}}.yaml
