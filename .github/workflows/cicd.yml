@@ -207,7 +207,7 @@ jobs:
           #gh auth login 
           cd ./${{ env.GIT_DEPLOY_REPO }}
           ls -lrt ./
-          gh pr create --base master --head test --title test-pr --body test-pr
+          gh pr create --base master --head test --title test-pr --body test-pr --repo github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}
           
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
