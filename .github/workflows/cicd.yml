@@ -148,23 +148,8 @@ jobs:
           git push --set-upstream origin dev
 
     - name: Run the Pull Request Action
-      uses: devops-infra/action-pull-request@v0.5.3
-      with:
-        github_token: ${{ secrets.G_TOKEN }}
-        source_branch: dev
-        target_branch: master
-        title: My pull request
-        body: "**Automated pull request**"
-        reviewer: vishwanath-r-puranik
-        assignee: vishwanath-r-puranik
-        label: enhancement
-        milestone: My milestone
-        draft: true
-        old_string: "<!-- Add your description here -->"
-        new_string: "** Automatic pull request**"
-        get_diff: true
-        ignore_users: "dependabot"
-        allow_no_diff: false
+      run: |
+          hub pull-request -b master -h dev
 
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
