@@ -33,7 +33,7 @@ jobs:
   build:
     name: Build the code and image
     #if: github.event_name == 'pull_request'
-    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'dev')
+    if: startsWith(github.head_ref, 'dev') && github.event.pull_request.merged == true
  
     runs-on: ubuntu-latest
     environment: 
