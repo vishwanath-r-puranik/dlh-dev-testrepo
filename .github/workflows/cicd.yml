@@ -26,7 +26,7 @@ env:
 jobs:
   build:
     name: Build the code and image
-    if: github.event_name == 'pull_request'
+    #if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     environment: 
       name: Dev
@@ -147,9 +147,7 @@ jobs:
           git checkout dev
           git push --set-upstream origin dev
 
-    - name: Run the Pull Request Action
-      run: |
-          hub pull-request -b master -h dev
+
 
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
@@ -167,7 +165,7 @@ jobs:
 
   DeployToTest:
     name: Deployment to Test environment
-    if: github.event.ref == 'refs/heads/master'
+   # if: github.event.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     environment: 
       name: Test
@@ -181,7 +179,7 @@ jobs:
 
           git config --global user.email "vishwanath.r.puranik@gov.ab.ca"
 
-          git clone  -b dev https://vishwanath-r-puranik:${{ secrets.G_TOKEN }}@github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}.git 
+          git clone  https://vishwanath-r-puranik:${{ secrets.G_TOKEN }}@github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}.git 
 
     - name: 'Update test deployment manifests'
       run: |
@@ -200,25 +198,11 @@ jobs:
           git branch test
           git checkout test
           git push --set-upstream origin test
-
+    
     - name: Run the Pull Request Action
-      uses: devops-infra/action-pull-request@v0.5.3
-      with:
-        github_token: ${{ secrets.G_TOKEN }}
-        source_branch: test
-        target_branch: master
-        title: My pull request
-        body: "**Automated pull request**"
-        reviewer: vishwanath-r-puranik
-        assignee: vishwanath-r-puranik
-        label: enhancement
-        milestone: My milestone
-        draft: true
-        old_string: "<!-- Add your description here -->"
-        new_string: "** Automatic pull request**"
-        get_diff: true
-        ignore_users: "dependabot"
-        allow_no_diff: false
+      run: |
+          gh auth login --with-token ${{ secrets.G_TOKEN }}
+          gh pr create --base master --head test
           
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
