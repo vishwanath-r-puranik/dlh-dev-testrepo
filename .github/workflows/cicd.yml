@@ -201,8 +201,9 @@ jobs:
     
     - name: Run the Pull Request Action
       run: |
-          gh auth login 
-          #gh pr create --base master --head test
+          #gh auth login 
+          cd ./${{ env.GIT_DEPLOY_REPO }}
+          gh pr create --base master --head test
           
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
