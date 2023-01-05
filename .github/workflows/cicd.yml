@@ -199,6 +199,8 @@ jobs:
           git branch test
           git checkout test
           git push --set-upstream origin test
+          git branch master
+        
           git request-pull test https://github.com/vishwanath-r-puranik/moves-dlh-deploy-artifacts-ghactions master
     
     - name: Run the Pull Request Action
