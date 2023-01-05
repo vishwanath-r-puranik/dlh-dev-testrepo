@@ -199,12 +199,13 @@ jobs:
           git branch test
           git checkout test
           git push --set-upstream origin test
+          git request-pull test https://github.com/vishwanath-r-puranik/moves-dlh-deploy-artifacts-ghactions master
     
     - name: Run the Pull Request Action
       run: |
           #gh auth login 
           cd ./${{ env.GIT_DEPLOY_REPO }}
-          gh pr create --base master --head test --title test-pr --body test-pr
+          #gh pr create --base master --head test --title test-pr --body test-pr
           
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
