@@ -6,10 +6,10 @@ name: .NET
 on:
   #push:
     #branches: [ "master" ]
-  pull_request:
-    types:
-      - opened
-    branches: [ "master" ]
+  #pull_request:
+    #types:
+      #- opened
+    #branches: [ "master" ]
   pull_request_target:
     types:
       - closed
@@ -174,7 +174,7 @@ jobs:
 
   DeployToTest:
     name: Deployment to Test environment
-   # if: github.event.ref == 'refs/heads/master'
+    if: github.event.ref == 'refs/heads/stop'
     runs-on: ubuntu-latest
     environment: 
       name: Test
