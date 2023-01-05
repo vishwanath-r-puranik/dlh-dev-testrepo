@@ -27,7 +27,7 @@ env:
 jobs:
   build:
     name: Build the code and image
-    #if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     environment: 
       name: Dev
@@ -144,9 +144,10 @@ jobs:
 
           git commit -m "committed from gh task"
 
-          git branch dev
-          git checkout dev
-          git push --set-upstream origin dev
+          #git branch dev
+          #git checkout dev
+          #git push --set-upstream origin dev
+          git push
 
 
 
@@ -180,7 +181,7 @@ jobs:
 
           git config --global user.email "vishwanath.r.puranik@gov.ab.ca"
 
-          git clone -b dev https://vishwanath-r-puranik:${{ secrets.G_TOKEN }}@github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}.git 
+          git clone https://vishwanath-r-puranik:${{ secrets.G_TOKEN }}@github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}.git 
 
     - name: 'Update test deployment manifests'
       run: |
@@ -195,10 +196,11 @@ jobs:
           git add .
 
           git commit -m "committed from gh task"
-
-          git branch test
-          git checkout test
-          git push --set-upstream origin test
+          git push
+         # git branch test
+          #git checkout test
+         # git push --set-upstream origin test
+           
         
          # git request-pull test https://github.com/vishwanath-r-puranik/moves-dlh-deploy-artifacts-ghactions master:test
     
@@ -210,7 +212,7 @@ jobs:
           git config --global user.name "vishwanath-r-puranik"
 
           git config --global user.email "vishwanath.r.puranik@gov.ab.ca"
-          gh pr create --base master --head test --title "test-pr" --body "test-pr" --repo "github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}"
+          #gh pr create --base master --head test --title "test-pr" --body "test-pr" --repo "github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}"
           
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
