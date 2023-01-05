@@ -4,10 +4,7 @@
 name: .NET
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+ push:
     
 env:
   # Use docker.io for Docker Hub if empty
