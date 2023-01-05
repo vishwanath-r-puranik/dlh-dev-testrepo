@@ -177,7 +177,7 @@ jobs:
 
           git config --global user.email "vishwanath.r.puranik@gov.ab.ca"
 
-          git clone  https://vishwanath-r-puranik:${{ secrets.G_TOKEN }}@github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}.git 
+          git clone  -b dev https://vishwanath-r-puranik:${{ secrets.G_TOKEN }}@github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}.git 
 
     - name: 'Update test deployment manifests'
       run: |
