@@ -18,6 +18,7 @@ env:
   IMAGE_NAME2: permit-fe
   APP: testpermit-microservices
   GIT_DEPLOY_REPO: moves-dlh-deploy-artifacts-ghactions
+  GH_TOKEN: ${{ github.token }}
 
   eOPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   eOPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
