@@ -147,9 +147,7 @@ jobs:
           git checkout dev
           git push --set-upstream origin dev
 
-    - name: Run the Pull Request Action
-      run: |
-          hub pull-request -b master -h dev
+
 
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
