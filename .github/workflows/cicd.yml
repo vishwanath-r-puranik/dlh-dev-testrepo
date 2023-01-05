@@ -26,7 +26,7 @@ env:
 jobs:
   build:
     name: Build the code and image
-    if: github.event.ref == 'refs/heads/master'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     environment: 
       name: Dev
@@ -155,8 +155,58 @@ jobs:
         insecure_skip_tls_verify: true
         namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
-    - name: Deploy application onto OpenShift
+    - name: Deploy application onto Development OpenShift cluster environment
       run: |
 
          # oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=${{ secrets.OPENSHIFT_SERVER }}
           oc apply -f ./${{ env.GIT_DEPLOY_REPO }}/dev/deploy/${{env.APP}}.yaml
+
+  DeployToTest:
+    name: Deployment to Test environment
+    if: github.event.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment: 
+      name: Test
+    steps:
+    - name: GitOps git repo clone
+      run: |
+          
+
+
+          git config --global user.name "vishwanath-r-puranik"
+
+          git config --global user.email "vishwanath.r.puranik@gov.ab.ca"
+
+          git clone  https://vishwanath-r-puranik:${{ secrets.G_TOKEN }}@github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}.git 
+
+    - name: 'Update test deployment manifests'
+      run: |
+          echo $GITHUB_SHA
+ 
+          cp ./${{ env.GIT_DEPLOY_REPO }}/dev/deploy/${{env.APP}}.yaml ./${{ env.GIT_DEPLOY_REPO }}/test/deploy/${{env.APP}}.yaml
+
+    - name: 'Upload updated deployment manifests'
+      run: |
+      
+          cd ./${{ env.GIT_DEPLOY_REPO }}
+          git add .
+
+          git commit -m "committed from gh task"
+
+          git branch test
+          git checkout test
+          git push --set-upstream origin test
+          
+    - name: Log in to OpenShift
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ env.eOPENSHIFT_SERVER }}
+        openshift_token: ${{ env.eOPENSHIFT_TOKEN }}
+        insecure_skip_tls_verify: true
+        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+        
+    - name: Deploy application onto Test OpenShift cluster environment
+      run: |
+
+         # oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=${{ secrets.OPENSHIFT_SERVER }}
+          oc apply -f ./${{ env.GIT_DEPLOY_REPO }}/test/deploy/${{env.APP}}.yaml
