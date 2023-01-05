@@ -202,7 +202,7 @@ jobs:
     - name: Run the Pull Request Action
       run: |
           gh auth login --with-token ${{ secrets.G_TOKEN }}
-          gh pr create --base master --head test
+          #gh pr create --base master --head test
           
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
