@@ -207,6 +207,9 @@ jobs:
           #gh auth login 
           cd ./${{ env.GIT_DEPLOY_REPO }}
           ls -lrt ./
+          git config --global user.name "vishwanath-r-puranik"
+
+          git config --global user.email "vishwanath.r.puranik@gov.ab.ca"
           gh pr create --base master --head test --title "test-pr" --body "test-pr" --repo "github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}"
           
     - name: Log in to OpenShift
