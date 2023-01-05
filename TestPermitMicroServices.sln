@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.810.19
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPermitMicroAPI", "TestPermitMicroAPI\TestPermitMicroAPI.csproj", "{90A86596-7D04-4F25-8839-9EBF005975F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPermitMicroFrontEnd", "TestPermitMicroFrontEnd\TestPermitMicroFrontEnd.csproj", "{6A948448-1088-4B67-A3BF-15447F66D022}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90A86596-7D04-4F25-8839-9EBF005975F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90A86596-7D04-4F25-8839-9EBF005975F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90A86596-7D04-4F25-8839-9EBF005975F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90A86596-7D04-4F25-8839-9EBF005975F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A948448-1088-4B67-A3BF-15447F66D022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A948448-1088-4B67-A3BF-15447F66D022}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A948448-1088-4B67-A3BF-15447F66D022}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A948448-1088-4B67-A3BF-15447F66D022}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EF235355-7C54-4775-8C6B-287EAACB0822}
+	EndGlobalSection
+EndGlobal

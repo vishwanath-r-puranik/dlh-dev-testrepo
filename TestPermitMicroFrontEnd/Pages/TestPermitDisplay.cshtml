@@ -1,0 +1,195 @@
+﻿@page
+@model TestPermitMicroFrontEnd.Pages.TestPermitDisplayModel
+@{
+    ViewData["Title"] = "Test Permit Display";
+}
+<h1 class="display-6">@ViewData["Title"]</h1>
+
+<form>
+    <div class="form-group row">
+        <label for="testPermitNumber" class="col-sm-2 col-form-label col-form-label-sm">Test Permit Number</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="testPermitNumber" asp-for="testPermitNumber">
+        </div>
+        <label for="lastUpdate" class="col-sm-2 col-form-label col-form-label-sm">Last Update</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="lastUpdate" asp-for="lastUpdate">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="clientMVID" class="col-sm-2 col-form-label col-form-label-sm">Client MVID</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="clientMVID" asp-for="clientMVID">
+        </div>
+        <label for="updatedBy" class="col-sm-2 col-form-label col-form-label-sm">Updated By</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="updatedBy" asp-for="updatedBy">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="clientName" class="col-sm-2 col-form-label col-form-label-sm">Name</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="clientName" asp-for="clientName">
+        </div>
+        <div class="col-sm-6">
+            &nbsp;
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="clientAddress" class="col-sm-2 col-form-label col-form-label-sm">Address</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="clientAddress" asp-for="clientAddress">
+        </div>
+        <div class="col-sm-6">
+            &nbsp;
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="dob" class="col-sm-2 col-form-label col-form-label-sm">Date of Birth</label>
+        <div class="col-sm-3">
+            <input type="text" class="form-control form-control-sm" id="dob" asp-for="dob">
+        </div>
+        <label for="sex" class="col-sm-1 col-form-label col-form-label-sm">Sex</label>
+        <div class="col-sm-3">
+            <input type="text" class="form-control form-control-sm" id="sex" asp-for="sex">
+        </div>
+        <label for="blockPermit" class="col-sm-2 col-form-label col-form-label-sm">Block Permit</label>
+        <div class="col-sm-1">
+            <input type="text" class="form-control form-control-sm" id="blockPermit" asp-for="blockPermit">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="permitType" class="col-sm-2 col-form-label col-form-label-sm">Permit Type</label>
+        <div class="col-sm-3">
+            <input type="text" class="form-control form-control-sm" id="permitType" asp-for="permitType">
+        </div>
+        <label for="vClass" class="col-sm-1 col-form-label col-form-label-sm">Class</label>
+        <div class="col-sm-3">
+            <input type="text" class="form-control form-control-sm" id="vClass" asp-for="vClass">
+        </div>
+        <label for="noCharge" class="col-sm-2 col-form-label col-form-label-sm">No Charge</label>
+        <div class="col-sm-1">
+            <input type="text" class="form-control form-control-sm" id="noCharge" asp-for="noCharge">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="advance" class="col-sm-2 col-form-label col-form-label-sm">Advance</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="advance" asp-for="advance">
+        </div>
+        <label for="status" class="col-sm-2 col-form-label col-form-label-sm">Status</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="status" asp-for="status">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="saleDate" class="col-sm-2 col-form-label col-form-label-sm">Sale Date</label>
+        <div class="col-sm-3">
+            <input type="text" class="form-control form-control-sm" id="saleDate" asp-for="saleDate">
+        </div>
+        <label for="saleTx" class="col-sm-1 col-form-label col-form-label-sm">Sale TX</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="saleTx" asp-for="saleTx">
+        </div>
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-primary">Display TX</button>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="saleClerk" class="col-sm-2 col-form-label col-form-label-sm">Sale Clerk</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="saleClerk" asp-for="saleClerk">
+        </div>
+        <div class="col-sm-6">
+            &nbsp;
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="saleOffice" class="col-sm-2 col-form-label col-form-label-sm">Sale Office</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="saleOffice" asp-for="saleOffice">
+        </div>
+        <div class="col-sm-6">
+            &nbsp;
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="saleType" class="col-sm-2 col-form-label col-form-label-sm">Sale Type</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="saleType" asp-for="saleType">
+        </div>
+        <div class="col-sm-6">
+            &nbsp;
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="purchaseClient" class="col-sm-2 col-form-label col-form-label-sm">Purchase Client</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="purchaseClient" asp-for="purchaseClient">
+        </div>
+        <div class="col-sm-6">
+            &nbsp;
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="resultDate" class="col-sm-2 col-form-label col-form-label-sm">Result Date</label>
+        <div class="col-sm-3">
+            <input type="text" class="form-control form-control-sm" id="resultDate" asp-for="resultDate">
+        </div>
+        <label for="resultTx" class="col-sm-1 col-form-label col-form-label-sm">Result TX</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="resultTx" asp-for="resultTx">
+        </div>
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-primary">Display TX</button>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="resultClerk" class="col-sm-2 col-form-label col-form-label-sm">Result Clerk</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="resultClerk" asp-for="resultClerk">
+        </div>
+        <div class="col-sm-6">
+            &nbsp;
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="testDate" class="col-sm-2 col-form-label col-form-label-sm">Test Date</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="testDate" asp-for="testDate">
+        </div>
+        <div class="col-sm-6">
+            &nbsp;
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="driverExaminer" class="col-sm-2 col-form-label col-form-label-sm">Driver Examiner</label>
+        <div class="col-sm-3">
+            <input type="text" class="form-control form-control-sm" id="driverExaminer" asp-for="driverExaminer">
+        </div>
+        <div class="col-sm-6">
+            &nbsp;
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="reason" class="col-sm-2 col-form-label col-form-label-sm">Reason</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="reason" asp-for="reason">
+        </div>
+        <div class="col-sm-6">
+            &nbsp;
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="lastUpdate2" class="col-sm-2 col-form-label col-form-label-sm">Last Update</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="lastUpdate2" asp-for="lastUpdate2">
+        </div>
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-primary">Display TX</button>
+        </div>
+        <div class="col-sm-4">
+            &nbsp;
+        </div>
+    </div>
+</form>

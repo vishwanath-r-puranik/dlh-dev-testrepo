@@ -1,0 +1,250 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div>
+    <h1 class="display-6">
+        MOVES NEW System 2.0:  Test Permit File Display
+    </h1>
+    <p>Select your search criteria:</p>
+    <form method="post">
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            1. Search By Test Permit Number
+                        </button>
+                    </h2>
+                </div>
+
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div class="card-body">
+
+                        <div class="form-group row">
+                            <label for="testPermitNumber" class="col-sm-2 col-form-label  col-form-label-sm">Test Permit Number</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control form-control-sm" id="testPermitNumber" asp-for="testPermitNumber">
+                            </div>
+                            <div class="col-sm-5">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            2. Search By Client MVID
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label for="clientMVID" class="col-sm-2 col-form-label  col-form-label-sm">Client MVID</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control form-control-sm" id="clientMVID" asp-for="clientMVID">
+                            </div>
+                            <div class="col-sm-5">
+                                <button type="button" class="btn btn-primary">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            3. Search By Examiner No, Test Start Date, Sales Office ID, and Test Result
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label for="examinerNumber3" class="col-sm-2 col-form-label  col-form-label-sm">Examiner Number</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control form-control-sm" id="examinerNumber3">
+                            </div>
+                            <div class="col-sm-6">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="testStartDate3" class="col-sm-2 col-form-label  col-form-label-sm">Test Start Date</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control form-control-sm" id="testStartDate3">
+                            </div>
+                            <div class="col-sm-5">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="saleOfficeID3" class="col-sm-2 col-form-label  col-form-label-sm">Sale Office ID</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control form-control-sm" id="saleOfficeID3">
+                            </div>
+                            <div class="col-sm-6">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="testResult3" class="col-sm-2 col-form-label  col-form-label-sm">Test Result</label>
+                            <div class="col-sm-1">
+                                <input type="text" class="form-control form-control-sm" id="testResult3">
+                            </div>
+                            <div class="col-sm-9">
+                                <button type="button" class="btn btn-primary">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingFour">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            4. Search By Sales Office ID, Sale Start Date, Permit Type and Test Result
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label for="saleOfficeID4" class="col-sm-2 col-form-label  col-form-label-sm">Sale Office ID</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control form-control-sm" id="saleOfficeID4">
+                            </div>
+                            <div class="col-sm-6">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="saleStartDate4" class="col-sm-2 col-form-label  col-form-label-sm">Sale Start Date</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control form-control-sm" id="saleStartDate4">
+                            </div>
+                            <div class="col-sm-5">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="permitType4" class="col-sm-2 col-form-label  col-form-label-sm">Permit Type </label>
+                            <div class="col-sm-1">
+                                <input type="text" class="form-control form-control-sm" id="permitType4">
+                            </div>
+                            <div class="col-sm-9">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="testResult4" class="col-sm-2 col-form-label  col-form-label-sm">Test Result</label>
+                            <div class="col-sm-1">
+                                <input type="text" class="form-control form-control-sm" id="testResult4">
+                            </div>
+                            <div class="col-sm-9">
+                                <button type="button" class="btn btn-primary">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingFive">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            5. Search By Block Sale Test Permit (Permit Status, Start Date and Examiner No or MVID)
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label for="permitStatus5" class="col-sm-2 col-form-label  col-form-label-sm">Permit Status</label>
+                            <div class="col-sm-1">
+                                <input type="text" class="form-control form-control-sm" id="permitStatus5">
+                            </div>
+                            <div class="col-sm-9">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="startDate5" class="col-sm-2 col-form-label  col-form-label-sm">Start Date</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control form-control-sm" id="startDate5">
+                            </div>
+                            <div class="col-sm-6">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="examinerNumber5" class="col-sm-2 col-form-label  col-form-label-sm">Examiner Number</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control form-control-sm" id="examinerNumber5">
+                            </div>
+                            <div class="col-sm-6">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="mvid5" class="col-sm-2 col-form-label  col-form-label-sm">or MVID</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control form-control-sm" id="mvid5">
+                            </div>
+                            <div class="col-sm-5">
+                                <button type="button" class="btn btn-primary">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingSix">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                            6. Search By Block Permit Road Test Results (Test Start Date, Examiner No and Advance Test)
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label for="testStartDate6" class="col-sm-2 col-form-label  col-form-label-sm">Test Start Date</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control form-control-sm" id="testStartDate6">
+                            </div>
+                            <div class="col-sm-6">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="examinerNumber6" class="col-sm-2 col-form-label  col-form-label-sm">Examiner Number</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control form-control-sm" id="examinerNumber6">
+                            </div>
+                            <div class="col-sm-6">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="advanceTest6" class="col-sm-2 col-form-label  col-form-label-sm">Advance Test</label>
+                            <div class="col-sm-1">
+                                <input type="text" class="form-control form-control-sm" id="advanceTest6">
+                            </div>
+                            <div class="col-sm-9">
+                                <button type="button" class="btn btn-primary">Search</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
