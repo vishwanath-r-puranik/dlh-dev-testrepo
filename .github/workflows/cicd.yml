@@ -165,7 +165,7 @@ jobs:
 
   DeployToTest:
     name: Deployment to Test environment
-    if: github.event.ref == 'refs/heads/master'
+   # if: github.event.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     environment: 
       name: Test
