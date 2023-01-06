@@ -47,7 +47,9 @@ jobs:
     - name: 'create test branch for test env deployment'
       run: |
       
- 
+          
+          git config --global user.name "vishwanath-r-puranik"
+          git config --global user.email "vishwanath.r.puranik@gov.ab.ca"
           git add .
 
           git commit -m "committed from gh task for test"
