@@ -50,9 +50,9 @@ jobs:
           
           git config --global user.name "vishwanath-r-puranik"
           git config --global user.email "vishwanath.r.puranik@gov.ab.ca"
-          git add .
+        #  git add .
 
-          git commit -m "committed from gh task for test"
+         # git commit -m "committed from gh task for test"
 
           git branch test
           git checkout test
