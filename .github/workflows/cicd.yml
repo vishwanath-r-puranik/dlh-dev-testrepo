@@ -185,24 +185,29 @@ jobs:
           oc apply -f ./${{ env.GIT_DEPLOY_REPO }}/dev/deploy/${{env.APP}}.yaml
           
     - name: Open Pull Request for Test deployment
-      uses: devops-infra/action-pull-request@v0.5.3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        source_branch: test
-        target_branch: master
-        title: test pull request
-        template: ''
-        body: "**Automated pull request**"
-        reviewer: vishwanath-r-puranik
-        assignee: vishwanath-r-puranik
-        label: enhancement
-        milestone: My milestone
-        draft: true
-        old_string: "<!-- Add your description here -->"
-        new_string: "** Automatic pull request**"
-        get_diff: true
-        ignore_users: "dependabot"
-        allow_no_diff: true
+      run: |
+          gh pr create --base master --head test --title "test-pr" --body "test-pr"
+          
+     # uses: devops-infra/action-pull-request@v0.5.3
+     # with:
+     #   github_token: ${{ secrets.GITHUB_TOKEN }}
+     #   source_branch: test
+     #   target_branch: master
+     #   title: test pull request
+     #   template: ''
+     #   body: "**Automated pull request**"
+     #   reviewer: vishwanath-r-puranik
+     #   assignee: vishwanath-r-puranik
+     #  label: enhancement
+     #   milestone: My milestone
+     #   draft: true
+     #   old_string: "<!-- Add your description here -->"
+     #   new_string: "** Automatic pull request**"
+     #   get_diff: true
+     #   ignore_users: "dependabot"
+     #   allow_no_diff: true
+
+
 
   DeployToTest:
     name: Deployment to Test environment
