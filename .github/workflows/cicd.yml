@@ -43,7 +43,6 @@ jobs:
     - name: Checkout git repository
       id: checkout
       uses: actions/checkout@v3
-
     - name: 'create test branch for test env deployment'
       run: |
       
