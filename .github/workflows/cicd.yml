@@ -44,6 +44,20 @@ jobs:
       id: checkout
       uses: actions/checkout@v3
 
+    - name: 'create test branch for test env deployment'
+      run: |
+      
+ 
+          git add .
+
+          git commit -m "committed from gh task for test"
+
+          git branch test
+          git checkout test
+          git push --set-upstream origin test
+          #git push
+
+
     - name: Analyze with SonarQube
 
         # You can pin the exact commit or the version.
@@ -177,12 +191,12 @@ jobs:
       uses: devops-infra/action-pull-request@v0.5.3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        source_branch: test-deploy
+        source_branch: test
         target_branch: master
         title: test pull request
         template: ''
         body: "**Automated pull request**"
-        reviewer: vishwaath-r-puranik
+        reviewer: vishwanath-r-puranik
         assignee: vishwanath-r-puranik
         label: enhancement
         milestone: My milestone
