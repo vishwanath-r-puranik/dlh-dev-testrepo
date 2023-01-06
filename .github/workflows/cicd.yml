@@ -135,12 +135,13 @@ jobs:
     - name: 'Update patch with github commit Sha'
       run: |
           echo $GITHUB_SHA
- 
-          sed -i "s|:latest|:$GITHUB_SHA|g" ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api-template.yaml
           cp ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api-template.yaml ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api.yaml
+          sed -i "s|:latest|:$GITHUB_SHA|g" ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api.yaml
+        
           cat ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api.yaml
-          sed -i "s|:latest|:$GITHUB_SHA|g" ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe-template.yaml
+
           cp ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe-template.yaml ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe.yaml
+          sed -i "s|:latest|:$GITHUB_SHA|g" ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe.yaml
           cat ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe.yaml
           cd ./${{ env.GIT_DEPLOY_REPO }}
       
