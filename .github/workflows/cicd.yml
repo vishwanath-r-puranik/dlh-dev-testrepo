@@ -6,10 +6,10 @@ name: .NET
 on:
   #push:
     #branches: [ "master" ]
-  #pull_request:
-    #types:
-      #- opened
-    #branches: [ "master" ]
+  pull_request:
+    types:
+      - opened
+    branches: [ "master" ]
   pull_request_target:
     branches: [ "master" ]
     types:
@@ -34,7 +34,7 @@ jobs:
   build:
     name: Build the code and image
     #if: github.event_name == 'pull_request'
-    if: startsWith(github.head_ref, 'dev') && github.event.pull_request.merged == true
+    if: github.event_name = 'pull_request' && startsWith(github.head_ref, 'dev')
  
     runs-on: ubuntu-latest
     environment: 
@@ -43,15 +43,6 @@ jobs:
     - name: Checkout git repository
       id: checkout
       uses: actions/checkout@v3
-    - name: create test branch for test env deployment
-      run: | 
-          git config --global user.name "vishwanath-r-puranik"
-          git config --global user.email "vishwanath.r.puranik@gov.ab.ca"
-
-          git branch test
-          git checkout test
-          git push --set-upstream origin test
-          #git push
 
 
     - name: Analyze with SonarQube
@@ -184,10 +175,10 @@ jobs:
          # oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=${{ secrets.OPENSHIFT_SERVER }}
           oc apply -f ./${{ env.GIT_DEPLOY_REPO }}/dev/deploy/${{env.APP}}.yaml
           
-    - name: Open Pull Request for Test deployment
-      run: |
-          gh pr create --base master --head test --title "test-pr" --body "test-pr"
-          
+     # - name: Open Pull Request for Test deployment
+     # run: |
+     #     gh pr create --base master --head test --title "test-pr" --body "test-pr"
+     #     
      # uses: devops-infra/action-pull-request@v0.5.3
      # with:
      #   github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -211,7 +202,7 @@ jobs:
 
   DeployToTest:
     name: Deployment to Test environment
-    if: startsWith(github.head_ref, 'test') && github.event.pull_request.merged == true
+    if: startsWith(github.head_ref, 'dev') && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     environment: 
       name: Test
@@ -248,16 +239,7 @@ jobs:
         
          # git request-pull test https://github.com/vishwanath-r-puranik/moves-dlh-deploy-artifacts-ghactions master:test
     
-    - name: Run the Pull Request Action
-      run: |
-          #gh auth login 
-          cd ./${{ env.GIT_DEPLOY_REPO }}
-          ls -lrt ./
-          git config --global user.name "vishwanath-r-puranik"
 
-          git config --global user.email "vishwanath.r.puranik@gov.ab.ca"
-          #gh pr create --base master --head test --title "test-pr" --body "test-pr" --repo "github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}"
-          
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
       with:
