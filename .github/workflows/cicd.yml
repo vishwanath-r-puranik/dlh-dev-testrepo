@@ -6,10 +6,10 @@ name: .NET
 on:
   #push:
     #branches: [ "master" ]
-  #pull_request:
-    #types:
-      #- opened
-    #branches: [ "master" ]
+  pull_request:
+    types:
+      - opened
+    branches: [ "master" ]
   pull_request_target:
     branches: [ "master" ]
     types:
@@ -23,6 +23,8 @@ env:
   IMAGE_NAME1: permit-api
   IMAGE_NAME2: permit-fe
   APP: testpermit-microservices
+  APP1: TestPermitMicroAPI
+  APP2: TestPermitMicroFrontEnd
   GIT_DEPLOY_REPO: moves-dlh-deploy-artifacts-ghactions
   GH_TOKEN: ${{ github.token }}
 
@@ -31,10 +33,10 @@ env:
   OPENSHIFT_NAMESPACE: "dlh-dev"
 
 jobs:
-  build:
-    name: Build the code and image
+  fetch:
+    name: Code checkout and Sonar code scan
     #if: github.event_name == 'pull_request'
-    if: startsWith(github.head_ref, 'dev') && github.event.pull_request.merged == true
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'dev')
  
     runs-on: ubuntu-latest
     environment: 
@@ -43,19 +45,6 @@ jobs:
     - name: Checkout git repository
       id: checkout
       uses: actions/checkout@v3
-
-    - name: 'create test branch for test env deployment'
-      run: |
-      
- 
-          git add .
-
-          git commit -m "committed from gh task for test"
-
-          git branch test
-          git checkout test
-          git push --set-upstream origin test
-          #git push
 
 
     - name: Analyze with SonarQube
@@ -82,6 +71,17 @@ jobs:
             # Adds more detail to both client and server-side analysis logs, activating DEBUG mode for the scanner, and adding client-side environment variables and system properties to the server-side log of analysis report processing.
             #-Dsonar.verbose= # optional, default is false
 
+  build:
+    name: Build code
+    #if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'dev')
+    needs: [fetch]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout git repository
+      id: checkout1
+      uses: actions/checkout@v3
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -96,25 +96,36 @@ jobs:
     - name: current directory path
       run: pwd
     - name: list current directory structure
-      run: ls -lrt ./TestPermitMicroAPI/bin/Debug/net6.0
+      run: ls -lrt ./${{ env.APP1 }}/bin/Debug/net6.0
     - name: provide directory permissions
       run: echo $GITHUB_SHA
+
+    - name: Upload built artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: app-dll
+        path: ${{ env.APP1 }}/bin/Debug/net6.0/${{ env.APP1 }}.dll
+
+  create-image:
+    name: Create Image, scan & push to ACR
+    #if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'dev')
+    needs: [build]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download built artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: app-dll
+        path: ${{ env.APP1 }}/bin/Debug/net6.0/${{ env.APP1 }}.dll
+        
    # - name: Build the Docker image
-   #   run: docker build . --file ./TestPermitMicroAPI/Dockerfile --tag ${{ env.REGISTRY }}/024087d6-4aa7-4a52-90ec-0db8ffe1249e/dlh-dev/${{ env.IMAGE_NAME1 }}:$GITHUB_SHA
+   #   run: docker build . --file ./${{ env.APP1 }}/Dockerfile --tag ${{ env.REGISTRY }}/024087d6-4aa7-4a52-90ec-0db8ffe1249e/dlh-dev/${{ env.IMAGE_NAME1 }}:$GITHUB_SHA
     - name: Build the Docker image
-      run: docker build . --file ./TestPermitMicroAPI/Dockerfile --tag my-image-name:latest
- 
- 
-    - name: Anchore grype scan download
-      uses: anchore/scan-action/download-grype@v3
-      id: grype
-    - name: Anchore scan run
-      id: grype-scan
-      run: ${{steps.grype.outputs.cmd}} my-image-name:latest -o json > scan-image-json.json
-    - name: New Inspect grype scan json report
-      run: cat scan-image-json.json
- 
-    - name: Tag the Docker image to ACR tag
+      run: docker build . --file ./${{ env.APP1 }}/Dockerfile --tag my-image-name:latest
+
+    - name: Tag the Docker image with ACR tag/label
       run: docker tag my-image-name:latest ${{ env.REGISTRY }}/024087d6-4aa7-4a52-90ec-0db8ffe1249e/dlh-dev/${{ env.IMAGE_NAME1 }}:$GITHUB_SHA
  
     - name: Login to ACR
@@ -122,7 +133,36 @@ jobs:
     - name: push to ACR
       run: docker push ${{ env.REGISTRY }}/024087d6-4aa7-4a52-90ec-0db8ffe1249e/dlh-dev/${{ env.IMAGE_NAME1 }}:$GITHUB_SHA
 
-    - name: GitOps git repo clone
+  scan-image:
+    name: Scan container image
+    #if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'dev')
+    needs: [create-image]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Login to ACR
+      run: docker login ${{ env.REGISTRY }} -u ${{ secrets.ACR_USR }} -p ${{ secrets.ACR_PWD }}
+    - name: Anchore grype scan download
+      uses: anchore/scan-action/download-grype@v3
+      id: grype
+    - name: Anchore scan run
+      id: grype-scan
+      run: ${{steps.grype.outputs.cmd}} ${{ env.REGISTRY }}/024087d6-4aa7-4a52-90ec-0db8ffe1249e/dlh-dev/${{ env.IMAGE_NAME1 }}:$GITHUB_SHA -o json > scan-image-json.json
+    - name: New Inspect grype scan json report
+      run: cat scan-image-json.json
+ 
+ 
+  kustomize:
+    name: Update manifests with digest
+    #if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'dev')
+    needs: [scan-image]
+    runs-on: ubuntu-latest
+
+    steps:
+ 
+    - name: Clone deployment manifests repo
       run: |
           
 
@@ -139,21 +179,17 @@ jobs:
     - name: 'Update patch with github commit Sha'
       run: |
           echo $GITHUB_SHA
- 
-          sed -i "s|:latest|:$GITHUB_SHA|g" ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api-template.yaml
           cp ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api-template.yaml ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api.yaml
+          sed -i "s|:latest|:$GITHUB_SHA|g" ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api.yaml
+        
           cat ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-api.yaml
-          sed -i "s|:latest|:$GITHUB_SHA|g" ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe-template.yaml
+
           cp ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe-template.yaml ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe.yaml
+          sed -i "s|:latest|:$GITHUB_SHA|g" ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe.yaml
           cat ./${{ env.GIT_DEPLOY_REPO }}/dev/patch-fe.yaml
           cd ./${{ env.GIT_DEPLOY_REPO }}
       
-    - name: Install OpenShift client
-      uses: redhat-actions/openshift-tools-installer@v1
-      with:
-        oc: 4
-      
-      
+
     - name: 'Kustomize deployment manifests and other artifacts'
       run: |
           oc kustomize ./${{ env.GIT_DEPLOY_REPO }}/dev > ./${{ env.GIT_DEPLOY_REPO }}/dev/deploy/${{env.APP}}.yaml
@@ -171,8 +207,29 @@ jobs:
           #git push --set-upstream origin dev
           git push
 
+  DeploytoDev:
+    name: Deploy to Dev
+    #if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'dev')
+    needs: [kustomize]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clone updated deployment manifests repo
+      run: |
+          
 
 
+          git config --global user.name "vishwanath-r-puranik"
+
+          git config --global user.email "vishwanath.r.puranik@gov.ab.ca"
+
+          git clone  https://vishwanath-r-puranik:${{ secrets.G_TOKEN }}@github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}.git 
+
+    - name: Install OpenShift client
+      uses: redhat-actions/openshift-tools-installer@v1
+      with:
+        oc: 4
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
       with:
@@ -187,29 +244,34 @@ jobs:
          # oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=${{ secrets.OPENSHIFT_SERVER }}
           oc apply -f ./${{ env.GIT_DEPLOY_REPO }}/dev/deploy/${{env.APP}}.yaml
           
-    - name: Open Pull Request for Test deployment
-      uses: devops-infra/action-pull-request@v0.5.3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        source_branch: test
-        target_branch: master
-        title: test pull request
-        template: ''
-        body: "**Automated pull request**"
-        reviewer: vishwanath-r-puranik
-        assignee: vishwanath-r-puranik
-        label: enhancement
-        milestone: My milestone
-        draft: true
-        old_string: "<!-- Add your description here -->"
-        new_string: "** Automatic pull request**"
-        get_diff: true
-        ignore_users: "dependabot"
-        allow_no_diff: true
+     # - name: Open Pull Request for Test deployment
+     # run: |
+     #     gh pr create --base master --head test --title "test-pr" --body "test-pr"
+     #     
+     # uses: devops-infra/action-pull-request@v0.5.3
+     # with:
+     #   github_token: ${{ secrets.GITHUB_TOKEN }}
+     #   source_branch: test
+     #   target_branch: master
+     #   title: test pull request
+     #   template: ''
+     #   body: "**Automated pull request**"
+     #   reviewer: vishwanath-r-puranik
+     #   assignee: vishwanath-r-puranik
+     #  label: enhancement
+     #   milestone: My milestone
+     #   draft: true
+     #   old_string: "<!-- Add your description here -->"
+     #   new_string: "** Automatic pull request**"
+     #   get_diff: true
+     #   ignore_users: "dependabot"
+     #   allow_no_diff: true
+
+
 
   DeployToTest:
     name: Deployment to Test environment
-    if: startsWith(github.head_ref, 'test') && github.event.pull_request.merged == true
+    if: startsWith(github.head_ref, 'dev') && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     environment: 
       name: Test
@@ -246,16 +308,7 @@ jobs:
         
          # git request-pull test https://github.com/vishwanath-r-puranik/moves-dlh-deploy-artifacts-ghactions master:test
     
-    - name: Run the Pull Request Action
-      run: |
-          #gh auth login 
-          cd ./${{ env.GIT_DEPLOY_REPO }}
-          ls -lrt ./
-          git config --global user.name "vishwanath-r-puranik"
 
-          git config --global user.email "vishwanath.r.puranik@gov.ab.ca"
-          #gh pr create --base master --head test --title "test-pr" --body "test-pr" --repo "github.com/vishwanath-r-puranik/${{ env.GIT_DEPLOY_REPO }}"
-          
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
       with:
