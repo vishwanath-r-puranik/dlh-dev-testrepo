@@ -31,8 +31,8 @@ env:
   OPENSHIFT_NAMESPACE: "dlh-dev"
 
 jobs:
-  build:
-    name: Build the code and image
+  fetch:
+    name: Code checkout and Sonar code scan
     #if: github.event_name == 'pull_request'
     if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'dev')
  
@@ -69,6 +69,17 @@ jobs:
             # Adds more detail to both client and server-side analysis logs, activating DEBUG mode for the scanner, and adding client-side environment variables and system properties to the server-side log of analysis report processing.
             #-Dsonar.verbose= # optional, default is false
 
+  build:
+    name: Build code and Image
+    #if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'dev')
+    needs: [fetch]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout git repository
+      id: checkout
+      uses: actions/checkout@v3
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
